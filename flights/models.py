@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 
 
 class Flight(models.Model):
-    id = models.AutoField(primary_key=True)
     departure_location = models.CharField(max_length=100)
     arrival_location = models.CharField(max_length=100)
     fare = models.DecimalField(max_digits=8, decimal_places=2)

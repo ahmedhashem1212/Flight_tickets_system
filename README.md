@@ -4,14 +4,14 @@ locations. As well, demonstrating fare, departure and arrival times of the diffe
 flights. It allows user to make a reservation of flight and upgrading the ticket class.
 
 * If you wanna run the server use this command:
-    python manage.py runserver
+<br>   `python manage.py runserver`
 
 * MySQL database is used here and configured in config.yml.
 
 * Authentication used here is JWT
 
 * I cover the api with number of sutible unit test cases if you wanna run the test cases use this command:
-    python manage.py test
+ <br>   `python manage.py test`
     
 * Here we have 3 implemented apps I am gonna talk deeply about each one of them.
 ----------------------
@@ -21,13 +21,22 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
 
 1- http://127.0.0.1:8000/users/signup/  (post)
 
---Request_to_create_admin--->                   --Request_to_create_user--->             
+--Request_to_create_admin--->                               
 {                                              {   
-   "username":"user",                             "username":"user",
-   "email":"user5@gmail.com",                     "email":"user5@gmail.com",
-   "password":"user1234",                         "password":"user1234",
-   "is_staff":true                                "is_staff":false
-}                                              }
+   "username":"user",                          
+   "email":"user5@gmail.com",                  
+   "password":"user1234",                      
+   "is_staff":true                             
+}                                              
+<br>
+--Request_to_create_user--->                               
+{                                              {   
+   "username":"user",                          
+   "email":"user5@gmail.com",                  
+   "password":"user1234",                      
+   "is_staff":False                             
+}                                              
+<br>
 
 ----response ---->
 {
@@ -35,17 +44,18 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "data": {
         "email": "user@gmail.com",
         "username": "user",
-        "is_staff": true
+        "is_staff": true/false
     }
 }
-
+<br>
 2- http://127.0.0.1:8000/users/login/   (post)
 
---Request_to_create_admin--->               
+--Request--->               
 {   
     "email":"user5@gmail.com",
     "password":"user1234",
  }
+<br>
 
 ----response ---->
 {
@@ -59,18 +69,18 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
 -------------------------------------------------------
 2- Flights
 ----------------
-* The app to define a flight model in the DB and its related apis. The model has 5 attributes:
-    id (primary key)
-    departure_location 
-    arrival_location 
-    fare 
-    departure_time 
-    arrival_time 
+* The app to define a flight model in the DB and its related apis. The model has 5 attributes:<br>
+    id (primary key)<br>
+    departure_location <br>
+    arrival_location <br>
+    fare <br>
+    departure_time<br> 
+    arrival_time <br>
     we implement here 6 apis as follows:
+<br><br>
+1- http://127.0.0.1:8000/flights/   (admin token should be in the header) (get)<br>
 
-1- http://127.0.0.1:8000/flights/   (admin token should be in the header) (get)
-
---request---> {}
+--request---> {}<br>
 
 --response --> with status 200  [
     {
@@ -90,10 +100,10 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
         "arrival_time": "2023-04-14T21:23:49Z"
     }
     ]
+<br><br>
+2- http://127.0.0.1:8000/flights/:id  (admin token should be in the header) (get)<br>
 
-2- http://127.0.0.1:8000/flights/:id  (admin token should be in the header) (get)
-
---request--->{}
+--request--->{}<br>
 --response--->
 {
     "id": 1,
@@ -103,7 +113,8 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "departure_time": "2023-04-14T21:23:49Z",
     "arrival_time": "2023-04-14T21:23:49Z"
 }
-
+<br>
+<br>
 3- http://127.0.0.1:8000/flights/ (admin token should be in the header) (post)
 
 --request ---> 
@@ -114,6 +125,7 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
         "departure_time": "2023-04-14T21:23:49Z",
         "arrival_time": "2023-04-14T21:23:49Z"
 }
+<br><br>
 --response--->
 {
     "id": 4,
@@ -123,9 +135,9 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "departure_time": "2023-04-14T21:23:49Z",
     "arrival_time": "2023-04-14T21:23:49Z"
 }
-
+<br><br>
 4- http://127.0.0.1:8000/flights/:id (admin token should be in the header) (post)
-
+<br><br>
 --request ---> 
 {
         "departure_location": "Cairo",
@@ -133,7 +145,7 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
         "fare": "50.00",
         "departure_time": "2023-04-14T21:23:49Z",
         "arrival_time": "2023-04-14T21:23:49Z"
-}
+}<br><br>
 --response---> status 201 created
 {
     "id": 4,
@@ -143,16 +155,16 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "departure_time": "2023-04-14T21:23:49Z",
     "arrival_time": "2023-04-14T21:23:49Z"
 }
-
+<br><br>
 5- http://127.0.0.1:8000/flights/:id (admin token should be in the header) (delete)
-
---request ---> {}
+<br><br>
+--request ---> {}<br>
 --response---> status 204 no content{}
 
 6- http://127.0.0.1:8000/flights/search/?from=%&to=%&fare_min=%&fare_max=% 
 (user token should be in the header) (get)
 
---request --->{}
+--request --->{}<br>
 --response --->
 [
     {
@@ -164,22 +176,22 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
         "arrival_time": "2023-04-14T21:23:49Z"
     }
 ]
-
+<br><br>
 ** User can search on the flights using to and from and the range of price (optional) (fare_max or fare_min or both of them or none of them) 
 
 ---------------------------------------- 
 3- Bookings
 ---------
-** The app to define a booking model in the DB and its related apis. The model has 5 attributes:
-    id (primary key)
-    flight (forign key to the flight model)
-    user (forign key to the account model)
-    ticket_class (enum has 4 options  economy,premium_economy,business,first_class) 
-    price 
-    we implement here 3 apis as follows:
-
-1- http://127.0.0.1:8000/bookings/  (user token should be in the header) (post)
-
+** The app to define a booking model in the DB and its related apis. The model has 5 attributes:<br>
+    id (primary key)<br>
+    flight (forign key to the flight model)<br>
+    user (forign key to the account model)<br>
+    ticket_class (enum has 4 options  economy,premium_economy,business,first_class) <br>
+    price <br>
+    we implement here 3 apis as follows:<br>
+<br><br>
+1- http://127.0.0.1:8000/bookings/  (user token should be in the header) (post)<br>
+<br><br>
 --Request--->
 {   
     "flight":4,
@@ -187,7 +199,7 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "ticket_class":"economy",
     "price":100
 }
-
+<br><br>
 --Response ---> 201 created
 {
     "id": 7,
@@ -195,16 +207,16 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "price": "100.00",
     "flight": 4,
     "user": 1
-}
+}<br><br>
 
 2- http://127.0.0.1:8000/bookings/upgrade/:id (user token should be in the header) (put)
-
+<br><br>
 --Request --->
 {   
     "ticket_class":"premium_economy",
     "price":150 
 }
-
+<br><br>
 --Response---> {
     "id": 7,
     "ticket_class": "premium_economy",
@@ -212,10 +224,10 @@ flights. It allows user to make a reservation of flight and upgrading the ticket
     "flight": 4,
     "user": 1
 }
-
+<br><br>
 3- http://127.0.0.1:8000/bookings/cancel/7  (user token should be in the header) (delete)
 
---Request ---> {}
+--Request ---> {}<br>
 --Response ---> 204 no content
 {}
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import yaml
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,20 +90,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "djangoProject.wsgi.application"
+with open("config.yml") as f:
+    config = yaml.safe_load(f)
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# Database settings
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "test",
-        "USER": "root",
-        "PASSWORD": "root123",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
-        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+        "ENGINE": config["database"]["ENGINE"],
+        "NAME": config["database"]["NAME"],
+        "USER": config["database"]["USER"],
+        "PASSWORD": config["database"]["PASSWORD"],
+        "HOST": config["database"]["HOST"],
+        "PORT": config["database"]["PORT"],
+        "OPTIONS": config["database"]["OPTIONS"],
     }
 }
 

@@ -28,6 +28,3 @@ class Flight(models.Model):
 
     def __str__(self):
         return f"Flight from {self.departure_location} to {self.arrival_location}"
-
-    def __str__(self):
-        return f"Flight from {self.departure_location} to {self.arrival_location}"

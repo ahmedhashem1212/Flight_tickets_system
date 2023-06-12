@@ -32,7 +32,7 @@ class BookingTestCase(TestCase):
         )
 
     def test_book_flight(self):
-        url = reverse("book-flight")
+        url = reverse("book_flight")
         data = {
             "flight": self.flight.id,
             "user": self.user.id,
@@ -42,7 +42,6 @@ class BookingTestCase(TestCase):
         response = self.client.post(
             url, data, format="json", content_type="application/json"
         )
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         booking = Booking.objects.get(id=response.data["id"])
         self.assertEqual(booking.flight, self.flight)
@@ -51,7 +50,7 @@ class BookingTestCase(TestCase):
         self.assertEqual(booking.price, 150)
 
     def test_upgrade_ticket(self):
-        url = reverse("upgrade-booking", kwargs={"booking_id": self.booking.id})
+        url = reverse("upgrade_booking", kwargs={"booking_id": self.booking.id})
         data = {"ticket_class": "business", "price": 100}
         response = self.client.put(
             url, data, format="json", content_type="application/json"
@@ -62,7 +61,7 @@ class BookingTestCase(TestCase):
         self.assertEqual(self.booking.price, 100)
 
     def test_cancel_booking(self):
-        url = reverse("cancel-booking", kwargs={"booking_id": self.booking.id})
+        url = reverse("cancel_booking", kwargs={"booking_id": self.booking.id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Booking.objects.filter(id=self.booking.id).exists())

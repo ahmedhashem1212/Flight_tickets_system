@@ -48,7 +48,7 @@ class FlightDetailAPIView(APIView):
             "fare",
             "departure_time",
             "arrival_time",
-        ]  # List of valid parameter names
+        ]
         invalid_fields = set(request.data.keys()) - set(valid_fields)
         if invalid_fields:
             return Response(
@@ -77,12 +77,10 @@ class FlightSearchAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        fare_min = request.data.get("fare_min")
-        fare_max = request.data.get("fare_max")
-        departure_location = request.data.get("from")
-        arrival_location = request.data.get("to")
-        print(departure_location)
-        print(arrival_location)
+        fare_min = request.query_params.get("fare_min")
+        fare_max = request.query_params.get("fare_max")
+        departure_location = request.query_params.get("from")
+        arrival_location = request.query_params.get("to")
         if not departure_location or not arrival_location:
             return Response(
                 {"error": "Please provide both departure and arrival locations."},

@@ -9,13 +9,22 @@ from flights.serializers import FlightSerializer
 class FlightTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(
+        self.client_user = Client()
+        self.admin = User.objects.create_user(
             username="testuser",
             email="testuser@gmail.com",
             password="testpassword",
             is_staff=True,
         )
         self.client.login(email="testuser@gmail.com", password="testpassword")
+
+        self.user = User.objects.create_user(
+            username="testuser1",
+            email="testuser1@gmail.com",
+            password="testpassword",
+            is_staff=False,
+        )
+        self.client_user.login(email="testuser1@gmail.com", password="testpassword")
         self.flight_data = {
             "departure_location": "Location A",
             "arrival_location": "Location B",
@@ -25,14 +34,41 @@ class FlightTestCase(TestCase):
         }
         self.flight = Flight.objects.create(**self.flight_data)
 
+        self.flight_data_2 = {
+            "departure_location": "Location D",
+            "arrival_location": "Location C",
+            "fare": 120.0,
+            "departure_time": "2023-06-10T10:00:00",
+            "arrival_time": "2023-06-10T12:00:00",
+        }
+        self.flight_2 = Flight.objects.create(**self.flight_data_2)
+
+        self.flight_data_3 = {
+            "departure_location": "Location D",
+            "arrival_location": "Location C",
+            "fare": 1200.0,
+            "departure_time": "2023-06-10T10:00:00",
+            "arrival_time": "2023-06-10T12:00:00",
+        }
+        self.flight_3 = Flight.objects.create(**self.flight_data_3)
+
+        self.flight_data_4 = {
+            "departure_location": "Location D",
+            "arrival_location": "Location C",
+            "fare": 180.0,
+            "departure_time": "2023-06-10T10:00:00",
+            "arrival_time": "2023-06-10T12:00:00",
+        }
+        self.flight_4 = Flight.objects.create(**self.flight_data_4)
+
     def test_flight_list_authenticated(self):
-        url = reverse("flight-list")
+        url = reverse("flight_list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_flight_list_unauthenticated(self):
         self.client.logout()
-        url = reverse("flight-list")
+        url = reverse("flight_list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -48,7 +84,7 @@ class FlightTestCase(TestCase):
         self.assertEqual(serializer.data["fare"], 100.0)
 
     def test_get_flight(self):
-        url = reverse("flight-detail", kwargs={"flight_id": self.flight.id})
+        url = reverse("flight_detail", kwargs={"flight_id": self.flight.id})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -66,7 +102,7 @@ class FlightTestCase(TestCase):
         self.assertEqual(response.data["arrival_time"][:-1], self.flight.arrival_time)
 
     def test_update_flight(self):
-        url = reverse("flight-detail", kwargs={"flight_id": self.flight.id})
+        url = reverse("flight_detail", kwargs={"flight_id": self.flight.id})
         data = {
             "departure_location": "New Departure",
             "arrival_location": "New Arrival",
@@ -93,7 +129,39 @@ class FlightTestCase(TestCase):
         )
 
     def test_delete_flight(self):
-        url = reverse("flight-detail", kwargs={"flight_id": self.flight.id})
+        url = reverse("flight_detail", kwargs={"flight_id": self.flight.id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Flight.objects.filter(id=self.flight.id).exists())
+
+    def test_search_flights(self):
+        url = reverse("flight_search")
+        query_params = {
+            "from": "Location D",
+            "to": "Location C",
+            "fare_max": 500,
+            "fare_min": 100,
+        }
+
+        response = self.client_user.get(
+            url, query_params, format="json", content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_search_flights_invalid_data(self):
+        url = reverse("flight_search")
+        query_params = {
+            "from": "Location D",
+            "fare_max": 500,
+            "fare_min": 100,
+        }
+
+        response = self.client_user.get(
+            url, query_params, format="json", content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data["error"],
+            "Please provide both departure and arrival locations.",
+        )
